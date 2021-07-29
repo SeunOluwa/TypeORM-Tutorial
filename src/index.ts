@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import express, { Request, Response } from 'express';
+import { validate } from "class-validator";
 
 import { User } from "./entity/User";
 import { Post } from "./entity/Post";
@@ -14,6 +15,9 @@ app.post('/users', async (req: Request, res: Response) => {
 
     try {
         const user = User.create({ name, email, role });
+
+        const errors = await validate(user);
+        if (errors.length > 0) throw errors;
 
         await user.save();
 
